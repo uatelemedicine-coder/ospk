@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Одеська обласна станція переливання крові</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg:      #F2E2E2;
+      --red:     #C8102E;
+      --red-dk:  #A00D24;
+      --white:   #FFFFFF;
+      --div:     #ECECEC;
+      --text:    #111111;
+      --gray:    #888888;
+      --fb:      #1877F2;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════
+       VIEWS
+    ══════════════════════════════ */
+    .view        { display: none; width: 100%; min-height: 100vh; }
+    .view.active { display: block; }
+
+    /* ══════════════════════════════
+       MAIN PAGE
+    ══════════════════════════════ */
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      padding: 40px 5vw 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .hero img {
+      width: 30vw;
+      height: 30vw;
+      max-width: 130px;
+      max-height: 130px;
+      min-width: 90px;
+      min-height: 90px;
+      border-radius: 18px;
+      object-fit: cover;
+      object-position: center 30%;
+      box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    }
+
+    .hero h1 {
+      font-size: clamp(20px, 5.5vw, 26px);
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      color: var(--text);
+      padding: 0 2vw;
+    }
+
+    /* Section wrapper — full width, padding only on sides */
+    .section {
+      width: 100%;
+      padding: 0 4vw;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(15px, 4vw, 18px);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+
+    /* White card */
+    .wcard {
+      width: 100%;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* Row inside card */
+    .row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      min-height: 62px;
+      border-bottom: 1px solid var(--div);
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .row:last-child  { border-bottom: none; }
+    .row:active      { background: #FEF0F2; }
+
+    /* Separate button style */
+    .btn-row {
+      width: 100%;
+      background: var(--white);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      min-height: 66px;
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .1s, transform .1s;
+      margin-bottom: 10px;
+    }
+    .btn-row:last-child { margin-bottom: 0; }
+    .btn-row:active { background: #FEF0F2; transform: scale(.987); }
+
+    .row-txt  { flex: 1; font-size: clamp(15px, 4.2vw, 19px); font-weight: 400; line-height: 1.35; padding-right: 8px; }
+    .row-sub  { font-size: clamp(12px, 3.2vw, 15px); color: var(--gray); margin-top: 2px; }
+    .row-arr  { font-size: clamp(18px, 5vw, 22px); color: #C0C0C0; flex-shrink: 0; }
+
+    /* Icon */
+    .ico {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-right: 14px;
+    }
+    .ico.fb  { background: var(--fb); }
+    .ico.web { background: transparent; }
+
+    /* Contact block */
+    .contact-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px;
+      font-size: clamp(15px, 4.2vw, 19px);
+      font-weight: 700;
+      border-bottom: 1px solid var(--div);
+    }
+
+    .c-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 18px;
+      min-height: 58px;
+      border-bottom: 1px solid var(--div);
+      text-decoration: none;
+      color: var(--text);
+    }
+    .c-row:last-child { border-bottom: none; }
+    .c-row:active { background: #FEF0F2; }
+    .c-lbl { font-size: clamp(11px, 3vw, 14px); color: var(--gray); margin-bottom: 2px; }
+    .c-val { font-size: clamp(15px, 4.2vw, 18px); font-weight: 500; }
+
+    /* ══════════════════════════════
+       DETAIL PAGE
+    ══════════════════════════════ */
+    #detail { background: var(--bg); }
+
+    .d-top {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--white);
+      border-bottom: 1px solid var(--div);
+      padding: 12px 4vw 0;
+    }
+
+    .d-top-row {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 10px;
+    }
+
+    .back {
+      width: 34px; height: 34px;
+      border: 1.5px solid #CCCCCC;
+      border-radius: 50%;
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      color: var(--text);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .back:active { background: #F2F2F2; }
+
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 0 14px 12px;
+      font-size: clamp(12px, 3.4vw, 15px);
+      white-space: nowrap;
+      color: var(--gray);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+    }
+    .tab.on {
+      color: var(--red);
+      font-weight: 700;
+      border-bottom-color: var(--red);
+    }
+
+    .d-body {
+      padding: 14px 4vw 56px;
+    }
+
+    .sblock {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px 18px;
+      margin-bottom: 12px;
+    }
+
+    .sblock h2 {
+      font-size: clamp(16px, 4.5vw, 20px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--red);
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .sblock p {
+      font-size: clamp(14px, 3.8vw, 17px);
+      line-height: 1.65;
+      color: #333;
+      text-align: center;
+    }
+
+    .map-box {
+      margin: 14px 0 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .map-box iframe {
+      width: 100%; height: 200px;
+      border: none; display: block;
+    }
+    .map-cap { font-size: clamp(13px, 3.6vw, 16px); font-weight: 700; margin-top: 8px; }
+
+    .sch { margin-bottom: 14px; }
+    .sch:last-child { margin-bottom: 0; }
+    .sch-d { font-size: clamp(14px, 3.8vw, 17px); font-weight: 700; }
+    .sch-t { font-size: clamp(13px, 3.6vw, 16px); color: #555; font-style: italic; margin-top: 3px; }
+
+    .blk-lbl {
+      font-size: clamp(13px, 3.6vw, 16px);
+      font-weight: 700; margin: 14px 0 8px;
+    }
+    .blk-lbl:first-child { margin-top: 0; }
+
+    .blist { list-style: none; }
+    .blist li {
+      font-size: clamp(14px, 3.8vw, 17px);
+      line-height: 1.55;
+      padding: 8px 0 8px 16px;
+      position: relative;
+      border-bottom: 1px solid #F0F0F0;
+      color: #333;
+    }
+    .blist li:last-child { border-bottom: none; }
+    .blist li::before { content:'•'; position:absolute; left:0; color:var(--red); font-weight:900; }
+
+    .d-c-row {
+      display: flex; align-items: center; gap: 13px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--div);
+      text-decoration: none;
+      color: var(--text);
+    }
+    .d-c-row:last-child { border-bottom: none; }
+    .d-c-row:active { opacity: .6; }
+
+    svg { display:block; flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     MAIN
+══════════════════════════════ -->
+<div id="main" class="view active">
+
+  <div class="hero">
+    <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=300&h=300&fit=crop&crop=center&q=80"
+         alt="Донорство крові"
+         onerror="this.style.background='#f0c0c8'">
+    <h1>Одеська обласна станція переливання крові</h1>
+  </div>
+
+  <!-- Меню -->
+  <div class="section">
+    <div class="btn-row" onclick="openDetail(0)">
+      <span class="row-txt">1. Запрошуємо до донорства крові</span>
+      <span class="row-arr">→</span>
+    </div>
+    <div class="btn-row" onclick="openDetail(1)">
+      <span class="row-txt">2. Графік прийому донорів</span>
+      <span class="row-arr">→</span>
+    </div>
+    <div class="btn-row" onclick="openDetail(2)">
+      <span class="row-txt">3. Умови та можливості для донорів</span>
+      <span class="row-arr">→</span>
+    </div>
+    <div class="btn-row" onclick="openDetail(3)">
+      <span class="row-txt">4. Контактна інформація та корисні посилання</span>
+      <span class="row-arr">→</span>
+    </div>
+  </div>
+
+  <!-- Соцмережі -->
+  <div class="section">
+    <div class="section-title">Наші соціальні мережі</div>
+    <div class="wcard">
+
+      <a class="row" href="https://www.facebook.com/share/14iPfBXboSM/" target="_blank" rel="noopener">
+        <div class="ico fb">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </div>
+        <span class="row-txt">Facebook</span>
+        <span class="row-arr">→</span>
+      </a>
+
+      <a class="row" href="https://ospk.od.ua" target="_blank" rel="noopener">
+        <div class="ico web">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" stroke="#444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="21" cy="21" r="13"/><ellipse cx="21" cy="21" rx="5" ry="13"/>
+            <line x1="8" y1="21" x2="34" y2="21"/>
+            <line x1="9.5" y1="14.5" x2="32.5" y2="14.5"/>
+            <line x1="9.5" y1="27.5" x2="32.5" y2="27.5"/>
+            <circle cx="30" cy="31" r="5" fill="white" stroke="#444" stroke-width="1.4"/>
+            <path d="M28.5 31.5L29.8 32.8L32.5 30" stroke="#444" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+        <div>
+          <div class="row-txt">Web</div>
+          <div class="row-sub">Сайт</div>
+        </div>
+        <span class="row-arr" style="margin-left:auto">→</span>
+      </a>
+
+      <a class="row" href="https://donor.utcc.gov.ua/service_center/pivdennii" target="_blank" rel="noopener">
+        <div class="ico web">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" stroke="#444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="21" cy="21" r="13"/><ellipse cx="21" cy="21" rx="5" ry="13"/>
+            <line x1="8" y1="21" x2="34" y2="21"/>
+            <line x1="9.5" y1="14.5" x2="32.5" y2="14.5"/>
+            <line x1="9.5" y1="27.5" x2="32.5" y2="27.5"/>
+            <circle cx="30" cy="31" r="5" fill="white" stroke="#444" stroke-width="1.4"/>
+            <path d="M29 30.5L30.5 29L32 30.5" stroke="#444" stroke-width="1.3" fill="none"/>
+          </svg>
+        </div>
+        <div>
+          <div class="row-txt">Web</div>
+          <div class="row-sub">Додатковий ресурс</div>
+        </div>
+        <span class="row-arr" style="margin-left:auto">→</span>
+      </a>
+
+      <a class="row" href="https://www.donor.ua/centers/45" target="_blank" rel="noopener">
+        <div class="ico web">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" stroke="#444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="21" cy="21" r="13"/><ellipse cx="21" cy="21" rx="5" ry="13"/>
+            <line x1="8" y1="21" x2="34" y2="21"/>
+            <line x1="9.5" y1="14.5" x2="32.5" y2="14.5"/>
+            <line x1="9.5" y1="27.5" x2="32.5" y2="27.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="row-txt">Web</div>
+          <div class="row-sub">donor.ua</div>
+        </div>
+        <span class="row-arr" style="margin-left:auto">→</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Контакти -->
+  <div class="section">
+    <div class="wcard">
+      <div class="contact-head">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" fill="#C8102E"/>
+          <rect x="13" y="2" width="7" height="7" rx="1.5" fill="#C8102E"/>
+          <rect x="2" y="13" width="7" height="7" rx="1.5" fill="#C8102E"/>
+          <rect x="13" y="13" width="7" height="7" rx="1.5" fill="#C8102E"/>
+        </svg>
+        Контакт
+      </div>
+      <a class="c-row" href="tel:+380487760467">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.93 6.93l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <div><div class="c-lbl">Телефон</div><div class="c-val">+38 (048) 776-04-67</div></div>
+      </a>
+      <a class="c-row" href="tel:+380487761969">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.93 6.93l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <div><div class="c-lbl">Приймальня</div><div class="c-val">+38 (048) 776-19-69</div></div>
+      </a>
+      <a class="c-row" href="mailto:oospk@ukr.net">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><div class="c-lbl">Електронна пошта</div><div class="c-val">oospk@ukr.net</div></div>
+      </a>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+
+<!-- ══════════════════════════════
+     DETAIL
+══════════════════════════════ -->
+<div id="detail" class="view">
+
+  <div class="d-top">
+    <div class="d-top-row">
+      <div class="back" onclick="closeDetail()">‹</div>
+    </div>
+    <div class="tabs" id="tabbar">
+      <div class="tab on"  onclick="goSec(0)">1. Запрошуємо…</div>
+      <div class="tab"     onclick="goSec(1)">2. Графік…</div>
+      <div class="tab"     onclick="goSec(2)">3. Умови…</div>
+      <div class="tab"     onclick="goSec(3)">4. Контакти…</div>
+    </div>
+  </div>
+
+  <div class="d-body">
+
+    <div class="sblock" id="s0">
+      <h2>1. Запрошуємо до донорства крові</h2>
+      <p>Одеська обласна станція переливання крові запрошує Вас стати донором крові та долучитися до порятунку людських життів.</p>
+      <p style="margin-top:10px">📍 м. Одеса, Бісквітний провулок, 2/3</p>
+      <div class="map-box">
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=30.739%2C46.428%2C30.752%2C46.437&layer=mapnik&marker=46.4326%2C30.7455"
+          allowfullscreen loading="lazy" title="Карта"></iframe>
+      </div>
+      <div class="map-cap">Карта проїзду</div>
+    </div>
+
+    <div class="sblock" id="s1">
+      <h2>2. Графік прийому донорів</h2>
+      <div class="sch"><div class="sch-d">Понеділок – четвер:</div><div class="sch-t">08:00 – 14:30</div></div>
+      <div class="sch"><div class="sch-d">П'ятниця:</div><div class="sch-t">08:00 – 13:30</div></div>
+      <div class="sch"><div class="sch-d">Субота, неділя:</div><div class="sch-t">вихідні</div></div>
+    </div>
+
+    <div class="sblock" id="s2">
+      <h2>3. Умови та можливості для донорів</h2>
+      <div class="blk-lbl">Перед донацією необхідно:</div>
+      <ul class="blist">
+        <li>Паспорт або ID-картка та ідентифікаційний код</li>
+        <li>Вік від 18 років, вага понад 50 кг</li>
+        <li>Напередодні — без алкоголю, жирної їжі та ліків</li>
+        <li>Вранці легко поснідати та добре відпочити</li>
+      </ul>
+      <div class="blk-lbl" style="margin-top:16px">У станції переливання крові Ви можете:</div>
+      <ul class="blist">
+        <li>Здати кров або її компоненти</li>
+        <li>Отримати фахову консультацію щодо донорства</li>
+        <li>Дізнатися свою групу крові та резус-фактор</li>
+        <li>Долучитися до регулярного донорства</li>
+      </ul>
+    </div>
+
+    <div class="sblock" id="s3">
+      <h2>4. Контактна інформація та корисні посилання</h2>
+      <a class="d-c-row" href="tel:+380487760467">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.93 6.93l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <div><div class="c-lbl">Телефон</div><div class="c-val">+38 (048) 776-04-67</div></div>
+      </a>
+      <a class="d-c-row" href="tel:+380487761969">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.93 6.93l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <div><div class="c-lbl">Приймальня</div><div class="c-val">+38 (048) 776-19-69</div></div>
+      </a>
+      <a class="d-c-row" href="mailto:oospk@ukr.net">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><div class="c-lbl">Електронна пошта</div><div class="c-val">oospk@ukr.net</div></div>
+      </a>
+      <a class="d-c-row" href="https://ospk.od.ua" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div><div class="c-lbl">Офіційний сайт</div><div class="c-val">ospk.od.ua</div></div>
+      </a>
+      <a class="d-c-row" href="https://donor.utcc.gov.ua/service_center/pivdennii" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div><div class="c-lbl">Центр крові</div><div class="c-val">donor.utcc.gov.ua</div></div>
+      </a>
+      <a class="d-c-row" href="https://www.donor.ua/centers/45" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div><div class="c-lbl">Картка закладу</div><div class="c-val">donor.ua</div></div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const SECS = ['s0','s1','s2','s3'];
+
+  function openDetail(i) {
+    document.getElementById('main').classList.remove('active');
+    document.getElementById('detail').classList.add('active');
+    window.scrollTo(0,0);
+    setTimeout(() => goSec(i), 80);
+  }
+
+  function closeDetail() {
+    document.getElementById('detail').classList.remove('active');
+    document.getElementById('main').classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function goSec(i) {
+    document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('on', j===i));
+    document.querySelectorAll('.tab')[i].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    const el = document.getElementById(SECS[i]);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY
+              - document.querySelector('.d-top').offsetHeight - 10;
+    window.scrollTo({top, behavior:'smooth'});
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!document.getElementById('detail').classList.contains('active')) return;
+    const h = document.querySelector('.d-top').offsetHeight + 16;
+    let a = 0;
+    SECS.forEach((id,i) => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= h) a = i;
+    });
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('on', i===a));
+  }, {passive:true});
+</script>
+</body>
+</html>
